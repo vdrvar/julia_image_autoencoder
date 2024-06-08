@@ -17,14 +17,15 @@ This project develops a simple autoencoder using Flux.jl in Julia to compress an
 ### Installation
 
 1. **Install Julia:**
-bash´´´
+```bash
    Download and install Julia from the [official site](https://julialang.org/downloads/).
-´´´
+```
 
 3. **Clone the Repository:**
-
+```
 git clone https://github.com/yourusername/julia_image_autoencoder.git
 cd julia_image_autoencoder
+```
 
 3. **Install Required Julia Packages:**
 using Pkg
