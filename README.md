@@ -23,7 +23,7 @@ This project develops a simple autoencoder using Flux.jl in Julia to compress an
 
 3. **Clone the Repository:**
 ```
-git clone https://github.com/yourusername/julia_image_autoencoder.git
+git clone https://github.com/vdrvar/julia_image_autoencoder.git
 cd julia_image_autoencoder
 ```
 
