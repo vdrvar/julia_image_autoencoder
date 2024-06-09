@@ -6,7 +6,7 @@ using Plots  # Optional for visualization
 
 # Define the Autoencoder Model
 encoder = Chain(
-    Dense(128*128, 1024, relu),
+    Dense(128*128*3, 1024, relu),
     Dense(1024, 512, relu),
     Dense(512, 256, relu),
     Dense(256, 128, relu)
@@ -16,7 +16,7 @@ decoder = Chain(
     Dense(128, 256, relu),
     Dense(256, 512, relu),
     Dense(512, 1024, relu),
-    Dense(1024, 128*128, σ)
+    Dense(1024, 128*128*3, σ)
 )
 
 autoencoder = Chain(encoder, decoder)
@@ -31,9 +31,8 @@ function load_images(path::String)
     for file in readdir(path)
         if endswith(file, ".png") || endswith(file, ".jpg")
             img = load(joinpath(path, file))
-            img = Gray.(img)  # Convert to grayscale
             img = imresize(img, (128, 128))  # Resize to 128x128
-            img = Float32.(img)  # Convert to Float32
+            img = Float32.(channelview(img))  # Convert channels to Float32
             push!(images, img)
         end
     end
@@ -72,10 +71,17 @@ function main()
     println("Decompressed Size: ", size(decompressed))
 
     # Check if decompressed is defined and has correct size
-    if decompressed !== nothing && length(decompressed) == 128*128
-        decompressed_img = reshape(decompressed, (128, 128))
+    if decompressed !== nothing && length(decompressed) == 128*128*3
+        decompressed_img = reshape(decompressed, (3, 128, 128))
         println("Decompressed Image Reshape Successful.")
-        p = plot(heatmap(img), heatmap(decompressed_img), layout = (1, 2))
+        decompressed_img = permutedims(decompressed_img, (2, 3, 1))  # Correct shape for RGB view
+        # Plot the original and reconstructed images
+        original_img = permutedims(reshape(img, (3, 128, 128)), (2, 3, 1))
+        p = plot(
+            plot(colorview(RGB, original_img), title="Original"),
+            plot(colorview(RGB, decompressed_img), title="Reconstructed"),
+            layout = (1, 2)
+        )
         savefig(p, "output.png")  # Save the plot to a file
         println("Visualization saved to output.png")
     else
