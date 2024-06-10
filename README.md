@@ -38,9 +38,9 @@ Pkg.add("Plots") # Optional for visualization
    - Place the images you want to process in the `images` folder. Supported formats are `.png` and `.jpg`.
 
 2. **Run the Autoencoder Script:**
-   ```bash
-   julia autoencoder_script.jl
-  ```
+```bash
+julia autoencoder_script.jl
+```
 
   
 
