@@ -42,8 +42,13 @@ Pkg.add("Plots") # Optional for visualization
 julia autoencoder_script.jl
 ```
 
-  
+The script will:
 
+- Load images from the images folder.
+- Train the autoencoder.
+- Process each image and save the results in the outputs folder.
+  
+When the autoencoder is trained on multiple images, it learns to recognize and encode common features across these images. As a result, the reconstruction of any single image can be influenced by the learned features from other images in the training set, leading to a more generalized representation of image characteristics.
 
 ## Examples
 
