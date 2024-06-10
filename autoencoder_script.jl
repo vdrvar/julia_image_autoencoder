@@ -4,19 +4,19 @@ using Flux
 using Images
 using Plots  # Optional for visualization
 
-# Define the Autoencoder Model
+# Define the Autoencoder Model with fewer layers
 encoder = Chain(
-    Dense(128*128*3, 1024, relu),
+    Dense(128*128, 2048, relu),
+    Dense(2048, 1024, relu),
     Dense(1024, 512, relu),
-    Dense(512, 256, relu),
-    Dense(256, 128, relu)
+    Dense(512, 256, relu)
 )
 
 decoder = Chain(
-    Dense(128, 256, relu),
     Dense(256, 512, relu),
     Dense(512, 1024, relu),
-    Dense(1024, 128*128*3, σ)
+    Dense(1024, 2048, relu),
+    Dense(2048, 128*128, σ)
 )
 
 autoencoder = Chain(encoder, decoder)
@@ -28,19 +28,22 @@ opt = ADAM()
 # Function to load and preprocess images
 function load_images(path::String)
     images = []
+    filenames = []
     for file in readdir(path)
         if endswith(file, ".png") || endswith(file, ".jpg")
             img = load(joinpath(path, file))
+            img = Gray.(img)  # Convert to grayscale
             img = imresize(img, (128, 128))  # Resize to 128x128
-            img = Float32.(channelview(img))  # Convert channels to Float32
+            img = Float32.(img)  # Convert to Float32
             push!(images, img)
+            push!(filenames, file)
         end
     end
-    return images
+    return images, filenames
 end
 
 # Training the Autoencoder
-function train_autoencoder(data, epochs=10)
+function train_autoencoder(data, epochs=20)
     for epoch in 1:epochs
         for img in data
             img = vec(img)  # Flatten the image
@@ -51,42 +54,52 @@ function train_autoencoder(data, epochs=10)
     end
 end
 
+# Function to process and save images
+function process_and_save_images(data, filenames, output_path)
+    for (img, filename) in zip(data, filenames)
+        img_flat = vec(img)
+        compressed = encoder(img_flat)
+        decompressed = decoder(compressed)
+
+        if decompressed !== nothing && length(decompressed) == 128*128
+            decompressed_img = reshape(decompressed, (128, 128))
+
+            # Flip the images vertically
+            img_flipped = reverse(img, dims=1)
+            decompressed_img_flipped = reverse(decompressed_img, dims=1)
+
+            # Plot the original and reconstructed images with labels
+            p = plot(
+                heatmap(img_flipped, title="Original Image"),
+                heatmap(decompressed_img_flipped, title="Reconstructed Image"),
+                layout = (1, 2)
+            )
+            savefig(p, joinpath(output_path, "output_$filename.png"))
+            println("Visualization saved to output_$filename.png")
+        else
+            println("Error: Decompressed image is not properly defined or sized for $filename.")
+        end
+    end
+end
+
 # Example Usage
 function main()
-    data = load_images("images")
+    data_path = "images"
+    output_path = "outputs"
+
+    # Create output directory if it does not exist
+    if !isdir(output_path)
+        mkdir(output_path)
+    end
+
+    data, filenames = load_images(data_path)
     if isempty(data)
         println("No images found in the specified directory.")
         return
     end
-    
+
     train_autoencoder(data)
-
-    # Compress and Decompress an Image
-    img = data[1]
-    img_flat = vec(img)
-    println("Original Image Flattened Size: ", size(img_flat))
-    compressed = encoder(img_flat)
-    println("Compressed Size: ", size(compressed))
-    decompressed = decoder(compressed)
-    println("Decompressed Size: ", size(decompressed))
-
-    # Check if decompressed is defined and has correct size
-    if decompressed !== nothing && length(decompressed) == 128*128*3
-        decompressed_img = reshape(decompressed, (3, 128, 128))
-        println("Decompressed Image Reshape Successful.")
-        decompressed_img = permutedims(decompressed_img, (2, 3, 1))  # Correct shape for RGB view
-        # Plot the original and reconstructed images
-        original_img = permutedims(reshape(img, (3, 128, 128)), (2, 3, 1))
-        p = plot(
-            plot(colorview(RGB, original_img), title="Original"),
-            plot(colorview(RGB, decompressed_img), title="Reconstructed"),
-            layout = (1, 2)
-        )
-        savefig(p, "output.png")  # Save the plot to a file
-        println("Visualization saved to output.png")
-    else
-        println("Error: Decompressed image is not properly defined or sized.")
-    end
+    process_and_save_images(data, filenames, output_path)
 end
 
 main()
