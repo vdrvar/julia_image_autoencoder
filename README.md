@@ -43,10 +43,7 @@ Pkg.add("Plots") # Optional for visualization
   ```
 
   
-The script will:
-- Load images from the images folder.
-- Train the autoencoder.
-- Process each image and save the results in the outputs folder.
+
 
 ## Examples
 
