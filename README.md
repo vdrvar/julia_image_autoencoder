@@ -51,7 +51,7 @@ Below are five examples of the original images and their reconstructions by the 
 
 ### Example 1
 **Original Image:**
-images/pic1.jpg
+![pic1](https://github.com/vdrvar/julia_image_autoencoder/assets/48907543/0b91b744-36c9-4cae-93d6-771bd205bb4a)
 **Autoencoder Input & Reconstructed Image:**
 outputs/output_pic1.jpg.png
 
