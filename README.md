@@ -57,25 +57,26 @@ outputs/output_pic1.jpg.png
 
 ### Example 2
 **Original Image:**
-images/pic2.jpg
+![pic2](https://github.com/vdrvar/julia_image_autoencoder/assets/48907543/dd2809f1-536e-4300-9462-8c2740b4f2ac)
+
 **Autoencoder Input & Reconstructed Image:**
 outputs/output_pic2.jpg.png
 
 ### Example 3
 **Original Image:**
-images/pic3.jpg
+![pic3](https://github.com/vdrvar/julia_image_autoencoder/assets/48907543/9aa71a0f-d9b8-41b3-a211-8a16a8078b28)
 **Autoencoder Input & Reconstructed Image:**
 outputs/output_pic3.jpg.png
 
 ### Example 4
 **Original Image:**
-images/pic4.jpg
+![pic4](https://github.com/vdrvar/julia_image_autoencoder/assets/48907543/2861888d-4cb4-4e20-b073-15f520b10b11)
 **Autoencoder Input & Reconstructed Image:**
 outputs/output_pic4.jpg.png
 
 ### Example 5
 **Original Image:**
-images/pic5.jpg
+![pic5](https://github.com/vdrvar/julia_image_autoencoder/assets/48907543/4d14bc55-62b2-4b0b-bf5f-945f72184346)
 **Autoencoder Input & Reconstructed Image:**
 outputs/output_pic5.jpg.png
 
