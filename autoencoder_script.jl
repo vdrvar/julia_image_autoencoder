@@ -4,9 +4,10 @@ using Flux
 using Images
 using Plots  # Optional for visualization
 
-# Define the Autoencoder Model with fewer layers
+# Define the Autoencoder Model with more layers and higher resolution
 encoder = Chain(
-    Dense(128*128, 2048, relu),
+    Dense(256*256, 4096, relu),
+    Dense(4096, 2048, relu),
     Dense(2048, 1024, relu),
     Dense(1024, 512, relu),
     Dense(512, 256, relu)
@@ -16,7 +17,8 @@ decoder = Chain(
     Dense(256, 512, relu),
     Dense(512, 1024, relu),
     Dense(1024, 2048, relu),
-    Dense(2048, 128*128, σ)
+    Dense(2048, 4096, relu),
+    Dense(4096, 256*256, σ)
 )
 
 autoencoder = Chain(encoder, decoder)
@@ -33,7 +35,7 @@ function load_images(path::String)
         if endswith(file, ".png") || endswith(file, ".jpg")
             img = load(joinpath(path, file))
             img = Gray.(img)  # Convert to grayscale
-            img = imresize(img, (128, 128))  # Resize to 128x128
+            img = imresize(img, (256, 256))  # Resize to 256x256
             img = Float32.(img)  # Convert to Float32
             push!(images, img)
             push!(filenames, file)
@@ -61,8 +63,8 @@ function process_and_save_images(data, filenames, output_path)
         compressed = encoder(img_flat)
         decompressed = decoder(compressed)
 
-        if decompressed !== nothing && length(decompressed) == 128*128
-            decompressed_img = reshape(decompressed, (128, 128))
+        if decompressed !== nothing && length(decompressed) == 256*256
+            decompressed_img = reshape(decompressed, (256, 256))
 
             # Flip the images vertically
             img_flipped = reverse(img, dims=1)
